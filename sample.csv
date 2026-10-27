@@ -1,0 +1,9 @@
+product,category,price,quantity,region
+Notebook,Stationery,4.50,120,North
+Pen,Stationery,1.25,300,North
+Mug,Kitchen,9.99,45,South
+Notebook,Stationery,4.50,80,South
+Lamp,Home,24.00,20,East
+Mug,Kitchen,9.99,,East
+Desk,Home,149.00,5,West
+Pen,Stationery,1.25,210,West
