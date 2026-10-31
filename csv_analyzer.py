@@ -1,7 +1,7 @@
 """csv-data-analyzer: summarize a CSV file from the command line.
 
 For each column it reports:
-  - numeric columns: value count, missing count, min, max, mean
+  - numeric columns: value count, missing count, min, max, mean, median
   - text columns: value count, missing count, unique count, sample values
 
 A column counts as numeric only when every non-empty value parses as a
@@ -41,11 +41,18 @@ def analyze_rows(fieldnames, rows):
         missing = len(values) - len(present)
         info = {"values": len(present), "missing": missing}
         if present and all(_is_number(v) for v in present):
-            numbers = [float(v) for v in present]
+            numbers = sorted(float(v) for v in present)
+            count = len(numbers)
+            middle = count // 2
+            if count % 2:
+                median = numbers[middle]
+            else:
+                median = (numbers[middle - 1] + numbers[middle]) / 2
             info["type"] = "numeric"
-            info["min"] = min(numbers)
-            info["max"] = max(numbers)
-            info["mean"] = sum(numbers) / len(numbers)
+            info["min"] = numbers[0]
+            info["max"] = numbers[-1]
+            info["mean"] = sum(numbers) / count
+            info["median"] = median
         else:
             info["type"] = "text"
             info["unique"] = len(set(present))
@@ -78,8 +85,9 @@ def format_report(summary, only_column=None):
         lines.append("%s (%s): %d values, %d missing"
                      % (name, info["type"], info["values"], info["missing"]))
         if info["type"] == "numeric":
-            lines.append("  min %.2f, max %.2f, mean %.2f"
-                         % (info["min"], info["max"], info["mean"]))
+            lines.append("  min %.2f, max %.2f, mean %.2f, median %.2f"
+                         % (info["min"], info["max"], info["mean"],
+                            info["median"]))
         else:
             lines.append("  unique: %d, sample: %s"
                          % (info["unique"], ", ".join(info["sample"])))
