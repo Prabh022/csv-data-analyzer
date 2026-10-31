@@ -34,6 +34,22 @@ class TestAnalyzeRows(unittest.TestCase):
         self.assertAlmostEqual(info["max"], 9.99)
         self.assertAlmostEqual(info["mean"], (1.25 + 9.99 + 1.25) / 3)
 
+    def test_median_odd_count(self):
+        info = analyze_rows(self.fields, self.rows)["columns"]["price"]
+        self.assertAlmostEqual(info["median"], 1.25)
+
+    def test_median_even_count_averages_middle_two(self):
+        rows = [
+            {"name": "A", "price": "10", "qty": "1"},
+            {"name": "B", "price": "20", "qty": "2"},
+        ]
+        info = analyze_rows(self.fields, rows)["columns"]["price"]
+        self.assertAlmostEqual(info["median"], 15.0)
+
+    def test_median_ignores_missing_values(self):
+        info = analyze_rows(self.fields, self.rows)["columns"]["qty"]
+        self.assertAlmostEqual(info["median"], 6.5)
+
     def test_missing_values_not_counted_as_zero(self):
         info = analyze_rows(self.fields, self.rows)["columns"]["qty"]
         self.assertEqual(info["values"], 2)
