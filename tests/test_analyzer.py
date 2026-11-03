@@ -56,6 +56,21 @@ class TestAnalyzeRows(unittest.TestCase):
         self.assertEqual(info["missing"], 1)
         self.assertAlmostEqual(info["mean"], 6.5)
 
+    def test_stddev_population(self):
+        info = analyze_rows(self.fields, self.rows)["columns"]["price"]
+        # values 1.25, 9.99, 1.25; mean 4.1633; population stddev ~4.12
+        self.assertAlmostEqual(info["stddev"], 4.12, places=2)
+
+    def test_stddev_single_value_is_zero(self):
+        rows = [{"name": "A", "price": "7", "qty": "1"}]
+        info = analyze_rows(self.fields, rows)["columns"]["price"]
+        self.assertAlmostEqual(info["stddev"], 0.0)
+
+    def test_stddev_ignores_missing_values(self):
+        info = analyze_rows(self.fields, self.rows)["columns"]["qty"]
+        # values 10, 3 (one missing); mean 6.5; population stddev 3.5
+        self.assertAlmostEqual(info["stddev"], 3.5)
+
     def test_text_column_stats(self):
         info = analyze_rows(self.fields, self.rows)["columns"]["name"]
         self.assertEqual(info["type"], "text")
