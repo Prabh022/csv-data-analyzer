@@ -2,7 +2,7 @@
 
 A small command-line tool that summarizes a CSV file: how many rows it has
 and, for each column, basic stats. Numeric columns get count, missing count,
-min, max, mean, and median. Text columns get count, missing count, unique count,
+min, max, mean, median, and standard deviation (population). Text columns get count, missing count, unique count,
 and the most common values. Empty cells are counted as missing, never as
 zero. A column counts as numeric only when every non-empty value parses as
 a number.
@@ -26,9 +26,9 @@ product (text): 8 values, 0 missing
 category (text): 8 values, 0 missing
   unique: 3, sample: Stationery, Kitchen, Home
 price (numeric): 8 values, 0 missing
-  min 1.25, max 149.00, mean 25.56, median 7.25
+  min 1.25, max 149.00, mean 25.56, median 7.25, stddev 47.16
 quantity (numeric): 7 values, 1 missing
-  min 5.00, max 300.00, mean 111.43, median 80.00
+  min 5.00, max 300.00, mean 111.43, median 80.00, stddev 100.31
 region (text): 8 values, 0 missing
   unique: 4, sample: North, South, East
 ```
@@ -39,7 +39,8 @@ region (text): 8 values, 0 missing
 python -m unittest discover -s tests -v
 ```
 
-11 tests, covering numeric stats (including median), missing-value handling,
+14 tests, covering numeric stats (including median and standard
+deviation), missing-value handling,
 text columns, mixed-type columns, and report formatting.
 
 ## Sample data

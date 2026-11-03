@@ -1,5 +1,16 @@
 # Changes
 
+## 2026-11-03 — Standard deviation for numeric columns
+
+- `csv_analyzer.py`: numeric columns now also report the population
+  standard deviation (missing cells excluded first; a single value gives
+  0.0). The report line now reads
+  `min, max, mean, median, stddev`.
+- `tests/test_analyzer.py`: 3 new tests (population stddev, single value,
+  missing values ignored) — 14 tests total, all passing.
+- Sample output in the README updated with the real values
+  (price stddev 47.16, quantity stddev 100.31).
+
 ## 2026-10-31 — Median for numeric columns
 
 - `csv_analyzer.py`: numeric columns now also report the median (middle

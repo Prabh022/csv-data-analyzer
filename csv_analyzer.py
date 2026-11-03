@@ -1,7 +1,8 @@
 """csv-data-analyzer: summarize a CSV file from the command line.
 
 For each column it reports:
-  - numeric columns: value count, missing count, min, max, mean, median
+  - numeric columns: value count, missing count, min, max, mean, median,
+    standard deviation (population)
   - text columns: value count, missing count, unique count, sample values
 
 A column counts as numeric only when every non-empty value parses as a
@@ -16,6 +17,7 @@ Standard library only.
 
 import argparse
 import csv
+import math
 import sys
 from collections import Counter
 
@@ -53,6 +55,8 @@ def analyze_rows(fieldnames, rows):
             info["max"] = numbers[-1]
             info["mean"] = sum(numbers) / count
             info["median"] = median
+            variance = sum((n - info["mean"]) ** 2 for n in numbers) / count
+            info["stddev"] = math.sqrt(variance)
         else:
             info["type"] = "text"
             info["unique"] = len(set(present))
@@ -85,9 +89,10 @@ def format_report(summary, only_column=None):
         lines.append("%s (%s): %d values, %d missing"
                      % (name, info["type"], info["values"], info["missing"]))
         if info["type"] == "numeric":
-            lines.append("  min %.2f, max %.2f, mean %.2f, median %.2f"
+            lines.append("  min %.2f, max %.2f, mean %.2f, median %.2f, "
+                         "stddev %.2f"
                          % (info["min"], info["max"], info["mean"],
-                            info["median"]))
+                            info["median"], info["stddev"]))
         else:
             lines.append("  unique: %d, sample: %s"
                          % (info["unique"], ", ".join(info["sample"])))
